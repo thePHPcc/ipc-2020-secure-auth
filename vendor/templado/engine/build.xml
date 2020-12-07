@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Templado" default="build" basedir=".">
+    <property name="source" value="src"/>
+    <property name="tools" value="${basedir}/tools" />
+
+    <target name="clean" description="Clean up and create artifact directories">
+        <delete dir="${basedir}/build/docs"/>
+        <delete dir="${basedir}/build/coverage"/>
+        <delete dir="${basedir}/build/logs"/>
+        <delete dir="${basedir}/build/pdepend"/>
+        <delete dir="${basedir}/build/phpab"/>
+
+        <mkdir dir="${basedir}/build/docs"/>
+        <mkdir dir="${basedir}/build/coverage"/>
+        <mkdir dir="${basedir}/build/logs"/>
+        <mkdir dir="${basedir}/build/pdepend"/>
+        <mkdir dir="${basedir}/build/phpab"/>
+    </target>
+
+    <target name="lint">
+        <apply executable="php" failonerror="true">
+            <arg value="-l" />
+
+            <fileset dir="${basedir}/src">
+                <include name="**/*.php" />
+                <modified />
+            </fileset>
+
+        </apply>
+    </target>
+
+    <target name="phpab" description="Build autoloader">
+        <exec executable="${tools}/phpab">
+            <arg line="--cache ${basedir}/build/phpab/autoload.cache -1 -o src/autoload.php" />
+            <arg path="src" />
+        </exec>
+    </target>
+
+    <target name="phpunit" description="Run unit tests using PHPUnit">
+        <exec executable="${tools}/phpunit" failonerror="true"/>
+    </target>
+
+    <target name="parallelTasks"
+            description="Run the pdepend, phpmd, phpcpd, phpcs and phploc tasks in parallel using a maximum of 2 threads.">
+        <parallel threadCount="2">
+            <sequential>
+                <antcall target="pdepend"/>
+                <antcall target="phpmd"/>
+            </sequential>
+            <antcall target="phpcpd"/>
+            <antcall target="phpcs"/>
+            <antcall target="phploc"/>
+        </parallel>
+    </target>
+
+
+    <target name="phploc" description="Generate phploc.xml">
+        <exec executable="phploc">
+            <arg line="--count-tests --log-xml ${basedir}/build/logs/phploc.xml ${source} tests"/>
+        </exec>
+    </target>
+
+    <target name="phpcs" description="Generate checkstyle.xml using PHP_CodeSniffer">
+        <exec executable="phpcs" output="/dev/null">
+            <arg line="--report=checkstyle
+              --report-file=${basedir}/build/logs/checkstyle.xml
+              --standard=phpcs.xml
+              ${source}"/>
+        </exec>
+    </target>
+
+    <target name="phive-exists-ci">
+        <available file="${user.home}/.phive/phive.phar" property="phive.present"/>
+    </target>
+
+    <target name="install-phive-ci" depends="phive-exists-ci" unless="phive.present"
+            description="Get phive on travis-ci and scrutinizer-ci">
+        <mkdir dir="${user.home}/.phive" />
+
+        <exec executable="wget" taskname="wget" dir="${user.home}/.phive">
+            <arg value="https://phar.io/releases/phive.phar"/>
+        </exec>
+        <exec executable="wget" taskname="wget" dir="${user.home}/.phive">
+            <arg value="https://phar.io/releases/phive.phar.asc"/>
+        </exec>
+        <exec executable="gpg" taskname="gpg-get-key" dir="${user.home}/.phive">
+            <arg line="--keyserver ha.pool.sks-keyservers.net --recv-keys 0x9D8A98B29B2D5D79" />
+        </exec>
+        <exec executable="gpg" taskname="gpg-verify" dir="${user.home}/.phive">
+            <arg line="--verify phive.phar.asc phive.phar" />
+        </exec>
+        <chmod file="${user.home}/.phive/phive.phar" perm="+x" />
+        <delete file="${user.home}/.phive/phive.phar.asc" />
+    </target>
+
+    <target name="install-tools-ci" depends="install-phive-ci">
+        <exec executable="${user.home}/.phive/phive.phar" taskname="phive">
+            <arg line="--no-progress install --trust-gpg-keys 4AA394086372C20A,2A8299CE842DD38C,96AFE5FD66ED915A" />
+        </exec>
+    </target>
+
+    <target name="build" depends="clean,lint,parallelTasks,phpunit"/>
+    <target name="test" depends="clean,lint,phpunit"/>
+</project>

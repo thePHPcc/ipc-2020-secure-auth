@@ -1,0 +1,6 @@
+{
+    "require": {
+        "templado/engine": "^4.0",
+        "ext-pdo": "*"
+    }
+}
