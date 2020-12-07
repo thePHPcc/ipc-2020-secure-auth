@@ -9,6 +9,10 @@ abstract class ProtectedPostRoute extends PostRoute {
 
     private ApplicationState $applicationState;
 
+    public function __construct(ApplicationState $applicationState) {
+        $this->applicationState = $applicationState;
+    }
+
     protected function buildExecutable(Request $request): Executable {
         if (!$this->applicationState->isLoggedIn()) {
             return new LoginRequired();

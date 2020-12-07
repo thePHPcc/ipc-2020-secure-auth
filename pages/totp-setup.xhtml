@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Secure Authentication Workshop - Setup TOTP</title>
+        <link rel="stylesheet" href="/styles.css" />
+    </head>
+    <body>
+        <h1>Secure Authentication Workshop - Setup TOTP</h1>
+        <hr />
+        <img src="/totp-qrcode" width="300" height="300"  alt="qrcode"/>
+        <hr />
+        <form action="/totp-confirm" method="post">
+            <input type="text" name="totp" />
+            <input type="submit" value="confirm" />
+        </form>
+    </body>
+</html>

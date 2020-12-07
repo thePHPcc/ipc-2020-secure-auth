@@ -3,12 +3,16 @@ namespace theseer\application;
 
 use PDO;
 use RuntimeException;
-use SQLite3;
+use theseer\application\totp\BaconQrCodeGenerator;
+use theseer\application\totp\SpomkyLabsGenerator;
+use theseer\application\webauthn\WebAuthnService;
 use theseer\framework\Application;
 use theseer\framework\Environment;
 use theseer\framework\http\NotFoundRoute;
 use theseer\framework\page\PageFileLoader;
 use theseer\framework\TokenGenerator;
+use theseer\application\totp\Generator;
+use WebAuthn\WebAuthn;
 
 class Factory {
 
@@ -79,7 +83,7 @@ class Factory {
         return new TokenGenerator($this->configuration->serverTime());
     }
 
-    private function createQueryFactory() {
+    private function createQueryFactory(): QueryFactory {
         return new QueryFactory(
             $this,
             $this->getApplicationState()
@@ -92,7 +96,7 @@ class Factory {
         );
     }
 
-    private function createCommandFactory() {
+    private function createCommandFactory(): CommandFactory {
         return new CommandFactory(
             $this,
             $this->getApplicationState()
@@ -100,10 +104,7 @@ class Factory {
     }
 
     public function createUserReader(): UserReader {
-        $pdo = new PDO($this->configuration->getUserDatabaseFile());
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        return new PdoUserReader($pdo);
+        return new PdoUserReader($this->createPdo());
     }
 
     public function createLoginFailedResultRoute(): LoginFailedResultRoute {
@@ -117,6 +118,72 @@ class Factory {
     public function createInsideRoute(): InsideRoute {
         return new InsideRoute(
             $this->createQueryFactory(),
+            $this->getApplicationState()
+        );
+    }
+
+    public function createTOTPGenerator(): Generator {
+        return new SpomkyLabsGenerator();
+    }
+
+    public function createQRCodeGenerator(): BaconQrCodeGenerator {
+        return new BaconQrCodeGenerator();
+    }
+
+    public function createTOTPSetupRoute(): TOTPSetupRoute {
+        return new TOTPSetupRoute(
+            $this->createQueryFactory(),
+            $this->getApplicationState()
+        );
+    }
+
+    public function createTOTPQRCodeRoute(): TOTPQRCodeRoute {
+        return new TOTPQRCodeRoute(
+            $this->createQueryFactory(),
+            $this->getApplicationState()
+        );
+    }
+
+    public function createUserWriter(): PdoUserWriter {
+        return new PdoUserWriter(
+            $this->createPdo()
+        );
+    }
+
+    private function createPdo(): PDO {
+        $pdo = new PDO($this->configuration->getUserDatabaseFile());
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
+    }
+
+    public function createTOTPConfirmRoute(): TOTPConfirmRoute {
+        return new TOTPConfirmRoute(
+            $this->createCommandFactory(),
+            $this->getApplicationState()
+        );
+    }
+
+    public function createWebAuthnService(): WebAuthnService {
+        $webAuthn = new WebAuthn(
+            'Secure Authentication Workshop',
+            $this->configuration->getWebAuthnDomain(),
+            ['none']
+        );
+
+        return new WebAuthnService($webAuthn);
+    }
+
+    public function createWebAuthnRegisterOptionsRoute() {
+        return new RegisterOptionsRoute(
+            $this->createQueryFactory(),
+            $this->getApplicationState()
+        );
+    }
+
+    public function createWebAuthnRegisterRoute() {
+        return new WebAuthnRegisterRoute(
+            $this->createCommandFactory(),
             $this->getApplicationState()
         );
     }

@@ -1,7 +1,6 @@
 <?php declare(strict_types = 1);
 namespace theseer\application;
 
-use DOMText;
 use Templado\Engine\SimpleSnippet;
 use theseer\framework\http\Query;
 use theseer\framework\http\Result;

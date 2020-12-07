@@ -7,9 +7,12 @@ class User {
 
     private string $passwdHash;
 
-    public function __construct(string $login, string $passwdHash) {
+    private string $totpSecret;
+
+    public function __construct(string $login, string $passwdHash, string $totpSecret) {
         $this->login = $login;
         $this->passwdHash = $passwdHash;
+        $this->totpSecret = $totpSecret;
     }
 
     public function login(): string {
@@ -20,4 +23,7 @@ class User {
         return $this->passwdHash;
     }
 
+    public function totpSecret(): string {
+        return $this->totpSecret;
+    }
 }

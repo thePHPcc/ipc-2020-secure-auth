@@ -1,6 +1,10 @@
 {
     "require": {
         "templado/engine": "^4.0",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "spomky-labs/otphp": "^10.0",
+        "bacon/bacon-qr-code": "^2.0"
     }
 }

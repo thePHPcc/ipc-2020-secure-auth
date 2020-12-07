@@ -16,7 +16,8 @@ class Configuration {
 
     public function staticPages(): StaticMap {
         return new StaticMap([
-            '/' => 'index.xhtml'
+            '/' => 'index.xhtml',
+            '/totp-confirmed' => 'totp-confirmed.xhtml'
         ]);
     }
 
@@ -25,9 +26,13 @@ class Configuration {
     }
 
     public function getUserDatabaseFile(): string {
-        $dbFile = dirname(__DIR__, 2) . '/users.sqlite';
+        $dbFile = dirname(__DIR__, 2) . '/data/users.sqlite';
 
         return 'sqlite:' . $dbFile;
+    }
+
+    public function getWebAuthnDomain(): string {
+        return 'secure.local.netpirates.net';
     }
 
     private function __construct(DateTimeImmutable $serverTime) {

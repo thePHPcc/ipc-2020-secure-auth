@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Templado\\Engine\\CSRFProtection' => $vendorDir . '/templado/engine/src/csrfprotection/CSRFProtection.php',
     'Templado\\Engine\\CSRFProtectionRenderer' => $vendorDir . '/templado/engine/src/csrfprotection/CSRFProtectionRenderer.php',
     'Templado\\Engine\\CSSSelector' => $vendorDir . '/templado/engine/src/selectors/CSSSelector.php',

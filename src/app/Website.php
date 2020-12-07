@@ -2,6 +2,7 @@
 namespace theseer\application;
 
 use theseer\framework\Application;
+use theseer\framework\http\ContentResultRoute;
 use theseer\framework\http\NotFoundResultRoute;
 use theseer\framework\http\Request;
 use theseer\framework\http\RequestRouter;
@@ -34,16 +35,26 @@ class Website implements Application {
         $router->addRoute($this->factory->createLoginRoute());
         $router->addRoute($this->factory->createInsideRoute());
 
+        $router->addRoute($this->factory->createTOTPSetupRoute());
+        $router->addRoute($this->factory->createTOTPQRCodeRoute());
+        $router->addRoute($this->factory->createTOTPConfirmRoute());
+
+        $router->addRoute($this->factory->createWebAuthnRegisterOptionsRoute());
+        $router->addRoute($this->factory->createWebAuthnRegisterRoute());
+
         $router->addRoute($this->factory->createNotFoundRoute());
     }
 
     public function registerResultRoutes(ResultRouter $router): void {
         $router->addRoute(new PageResultRoute());
+        $router->addRoute(new ContentResultRoute());
 
         $router->addRoute(new LoginSuccessResultRoute());
         $router->addRoute($this->factory->createLoginFailedResultRoute());
 
         $router->addRoute(new LoginRequiredResultRoute());
         $router->addRoute(new NotFoundResultRoute());
+
+        $router->addRoute(new TOTPConfirmedResultRoute());
     }
 }

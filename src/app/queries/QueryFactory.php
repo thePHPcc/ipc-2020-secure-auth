@@ -25,4 +25,26 @@ class QueryFactory {
             $this->factory->createpageFileLoader()->load('inside.xhtml')
         );
     }
+
+    public function createTOTPSetupQuery() {
+        return new TOTPSetupQuery(
+            $this->applicationState,
+            $this->factory->createTOTPGenerator()->generate(),
+            $this->factory->createpageFileLoader()->load('totp-setup.xhtml')
+        );
+    }
+
+    public function createTOTPQRCodeQuery() {
+        return new TOTPQRCodeQuery(
+            $this->factory->createTOTPGenerator()->generate($this->applicationState->TOTPSecret()),
+            $this->factory->createQRCodeGenerator()
+        );
+    }
+
+    public function createWebAuthnRegisterOptionsQuery() {
+        return new RegisterOptionsQuery(
+            $this->applicationState,
+            $this->factory->createWebAuthnService()
+        );
+    }
 }

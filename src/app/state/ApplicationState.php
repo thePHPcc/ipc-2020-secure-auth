@@ -13,6 +13,8 @@ class ApplicationState {
     private ?Url $previousUrl = null;
     private ?DateTimeImmutable $previousRequestTime = null;
     private ?User $loginUser = null;
+    private ?string $sharedSecret = null;
+    private ?string $webauthChallenge = null;
 
     public function __construct(SessionId $sessionId, CSRFToken $token) {
         $this->sessionId = $sessionId;
@@ -74,4 +76,37 @@ class ApplicationState {
 
         return $this->loginUser;
     }
+
+    public function setTOTPSecret(string $sharedSecret): void {
+        $this->sharedSecret = $sharedSecret;
+    }
+
+    public function hasTOTPSecret(): bool {
+        return $this->sharedSecret !== null;
+    }
+
+    public function TOTPSecret(): string {
+        if (!$this->hasTOTPSecret()) {
+            throw new ApplicationStateException('No TOTP Secret available');
+        }
+
+        return $this->sharedSecret;
+    }
+
+    public function setWebauthChallenge(string $challenge) {
+        $this->webauthChallenge = $challenge;
+    }
+
+    public function hasWebAuthnChallenge(): bool {
+        return $this->webauthChallenge !== null;
+    }
+
+    public function webAuthnChallenge(): string {
+        if (!$this->hasWebAuthnChallenge()) {
+            throw new ApplicationStateException('No WebAuthn challenge set');
+        }
+
+        return $this->webauthChallenge;
+    }
+
 }
