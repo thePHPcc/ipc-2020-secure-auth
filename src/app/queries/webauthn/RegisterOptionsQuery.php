@@ -10,9 +10,24 @@ use theseer\framework\Json;
 
 class RegisterOptionsQuery implements Query {
 
-    public function execute(): Result {
+    private ApplicationState $applicationState;
+    private WebAuthnService $webAuthn;
 
-        return new ContentResult(new Content('text/plain', '...'));
+    public function __construct(ApplicationState $applicationState, WebAuthnService $webAuthn) {
+        $this->applicationState = $applicationState;
+        $this->webAuthn = $webAuthn;
+    }
+
+    public function execute(): Result {
+        $options = $this->webAuthn->registrationOptions(
+           $this->applicationState->loginUser()
+        );
+
+        $this->applicationState->setWebauthChallenge(
+            $options->challenge()
+        );
+
+        return new ContentResult($options->toJsonContent());
     }
 
 }
