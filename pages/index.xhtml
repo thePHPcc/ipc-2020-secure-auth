@@ -5,16 +5,19 @@
         <meta charset="UTF-8" />
         <title>Secure Authentication Workshop</title>
         <link rel="stylesheet" href="/styles.css" />
+        <script type="text/javascript" src="/js/login.js"></script>
     </head>
     <body>
         <h1>Secure Authentcation Workshop</h1>
         <p id="info" />
-        <form action="/login" method="post">
-            <input type="text" name="username" />
+        <form id="form" action="/login" method="post">
+            <input type="hidden" id="webauthn" name="webauthn" value="" />
+            <input type="text" id="username" name="username" />
             <input type="password" name="password" />
             <input type="text" name="totp" />
 
             <input type="submit" value="Login!" />
+            <input type="submit" id="loginWebAuthn" value="Login with WebAuthn!" />
         </form>
     </body>
 </html>

@@ -9,10 +9,13 @@ class User {
 
     private string $totpSecret;
 
-    public function __construct(string $login, string $passwdHash, string $totpSecret) {
+    private string $webAuthnData;
+
+    public function __construct(string $login, string $passwdHash, string $totpSecret, string $webAuthn) {
         $this->login = $login;
         $this->passwdHash = $passwdHash;
         $this->totpSecret = $totpSecret;
+        $this->webAuthnData = $webAuthn;
     }
 
     public function login(): string {
@@ -26,4 +29,9 @@ class User {
     public function totpSecret(): string {
         return $this->totpSecret;
     }
+
+    public function webAuthnData(): string {
+        return $this->webAuthnData;
+    }
+
 }

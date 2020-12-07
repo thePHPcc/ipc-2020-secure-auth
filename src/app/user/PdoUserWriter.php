@@ -18,7 +18,7 @@ class PdoUserWriter implements UserWriter {
         $query = $this->pdo->prepare('Update users set webauthn = :webauthn where login = :login');
         $res = $query->execute([
             ':login' => $user->login(),
-            ':webauthn' => $result->asJson()
+            ':webauthn' => \serialize($result->webAuthnData())
         ]);
 
         if (!$res) {

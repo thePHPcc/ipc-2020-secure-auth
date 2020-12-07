@@ -6,7 +6,6 @@ use theseer\framework\http\Content;
 use theseer\framework\http\ContentResult;
 use theseer\framework\http\Query;
 use theseer\framework\http\Result;
-use theseer\framework\Json;
 
 class RegisterOptionsQuery implements Query {
 
@@ -20,7 +19,7 @@ class RegisterOptionsQuery implements Query {
 
     public function execute(): Result {
         $options = $this->webAuthn->registrationOptions(
-           $this->applicationState->loginUser()
+            $this->applicationState->loginUser()
         );
 
         $this->applicationState->setWebauthChallenge(

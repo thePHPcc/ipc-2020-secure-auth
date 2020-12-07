@@ -18,7 +18,8 @@ class CommandFactory {
         return new LoginCommand(
             $parameters,
             $this->applicationState,
-            $this->factory->createUserReader()
+            $this->factory->createUserReader(),
+            $this->factory->createWebAuthnService()
         );
     }
 

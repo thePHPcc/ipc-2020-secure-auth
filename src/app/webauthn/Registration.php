@@ -11,11 +11,17 @@ class Registration implements RegistrationResult {
         $this->data = $data;
     }
 
+    public static function fromSerializedData(string $webAuthnData) {
+        return new self(
+            \unserialize($webAuthnData)
+        );
+    }
+
     public function isSuccess(): bool {
         return true;
     }
 
-    public function asJson(): string {
-        return \json_encode($this->data, JSON_THROW_ON_ERROR | JSON_INVALID_UTF8_IGNORE);
+    public function webAuthnData(): stdClass {
+        return $this->data;
     }
 }

@@ -187,4 +187,10 @@ class Factory {
             $this->getApplicationState()
         );
     }
+
+    public function createWebAuthnLoginOptionsRoute() {
+        return new LoginOptionsRoute(
+            $this->createQueryFactory()
+        );
+    }
 }

@@ -47,4 +47,13 @@ class QueryFactory {
             $this->factory->createWebAuthnService()
         );
     }
+
+    public function createWebAuthnLoginOptionsQuery(GetRequest $request) {
+        return new LoginOptionsQuery(
+            $this->applicationState,
+            $this->factory->createUserReader(),
+            $this->factory->createWebAuthnService(),
+            $request->parameters()
+        );
+    }
 }

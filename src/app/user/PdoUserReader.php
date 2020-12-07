@@ -15,7 +15,7 @@ class PdoUserReader implements UserReader {
 
     public function findByUsername(string $username): ?User {
         $query = $this->pdo->prepare(
-                'select login, passwd, secret from users where login=:login'
+                'select login, passwd, secret, webauthn from users where login=:login'
         );
 
         try {
@@ -46,7 +46,8 @@ class PdoUserReader implements UserReader {
         return new User(
             $data[0]['login'],
             $data[0]['passwd'],
-            $data[0]['secret']
+            $data[0]['secret'],
+            $data[0]['webauthn']
         );
     }
 }

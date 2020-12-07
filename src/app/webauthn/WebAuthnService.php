@@ -14,7 +14,7 @@ class WebAuthnService {
         $this->webAuthn = $webAuthn;
     }
 
-    public function registrationOptions(User $user): RegistrationOptions {
+    public function registrationOptions(User $user): Options {
 
         $args = $this->webAuthn->getCreateArgs(
             $user->login(),
@@ -22,11 +22,22 @@ class WebAuthnService {
             $user->login()
         );
 
-        return new RegistrationOptions(
+        return new Options(
             $args,
             $this->webAuthn->getChallenge()->getBinaryString()
         );
     }
+
+    public function loginOptions(User $loginUser): Options {
+        $input = \unserialize($loginUser->webAuthnData(), ['allowed_classes' => [\stdClass::class]]);
+        $args = $this->webAuthn->getGetArgs([$input->credentialId]);
+
+        return new Options(
+            $args,
+            $this->webAuthn->getChallenge()->getBinaryString()
+        );
+    }
+
 
     public function register(string $clientDataJSON, string $attestationObject, string $challenge): RegistrationResult {
         try {
@@ -42,4 +53,19 @@ class WebAuthnService {
             return new RegistrationFailed($e->getMessage(), $e->getCode());
         }
     }
+
+    public function verify(AuthenticationRequest $request): bool {
+        try {
+            return $this->webAuthn->processGet(
+                $request->clientData(),
+                $request->authenticatorData(),
+                $request->signature(),
+                $request->publicKey(),
+                $request->challenge()
+            );
+        } catch (WebAuthnException $e) {
+            return false;
+        }
+    }
+
 }

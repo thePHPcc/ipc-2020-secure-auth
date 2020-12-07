@@ -41,6 +41,7 @@ class Website implements Application {
 
         $router->addRoute($this->factory->createWebAuthnRegisterOptionsRoute());
         $router->addRoute($this->factory->createWebAuthnRegisterRoute());
+        $router->addRoute($this->factory->createWebAuthnLoginOptionsRoute());
 
         $router->addRoute($this->factory->createNotFoundRoute());
     }
