@@ -3,8 +3,8 @@ namespace theseer\application;
 
 class StubUserReader implements UserReader {
 
-    public function findByUsernameAndPassword(string $username, string $passwd): ?User {
-        if ($username === 'root' && $passwd === 'secret') {
+    public function findByUsername(string $username): ?User {
+        if ($username === 'root') {
             return new User('root');
         }
 

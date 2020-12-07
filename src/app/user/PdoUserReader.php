@@ -13,16 +13,15 @@ class PdoUserReader implements UserReader {
         $this->pdo = $pdo;
     }
 
-    public function findByUsernameAndPassword(string $username, string $passwd): ?User {
+    public function findByUsername(string $username): ?User {
         $query = $this->pdo->prepare(
-                'select login from users where login=:login and passwd=:passwd'
+                'select login, passwd from users where login=:login'
         );
 
         try {
 
             $res = $query->execute([
-                ':login' => $username,
-                ':passwd' => $passwd
+                ':login' => $username
             ]);
 
             if (!$res) {
@@ -30,6 +29,8 @@ class PdoUserReader implements UserReader {
                     sprintf('PDO Error %d: %s', $query->errorCode(), $query->errorInfo())
                 );
             }
+
+            \usleep(\random_int(0, 100));
 
             $data = $query->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -44,6 +45,6 @@ class PdoUserReader implements UserReader {
             return null;
         }
 
-        return new User($data[0]['login']);
+        return new User($data[0]['login'], $data[0]['passwd']);
     }
 }

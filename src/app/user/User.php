@@ -5,12 +5,19 @@ class User {
 
     private string $login;
 
-    public function __construct(string $login) {
+    private string $passwdHash;
+
+    public function __construct(string $login, string $passwdHash) {
         $this->login = $login;
+        $this->passwdHash = $passwdHash;
     }
 
     public function login(): string {
         return $this->login;
+    }
+
+    public function passwdHash(): string {
+        return $this->passwdHash;
     }
 
 }
